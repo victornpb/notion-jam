@@ -13,7 +13,7 @@ async function run() {
 
     const pages = await notionModule.fetchArticles();
     for (const page of pages) {
-        const folderName = page.title.replace(/\s/g, '-').toLowerCase();
+        const folderName = page.title.replace(/[^A-z0-9_]/g, '-').toLowerCase();
         // save to disk
         const filePath = path.join('posts/', folderName, '/index.md');
         fs.mkdirSync(path.dirname(filePath), { recursive: true });
