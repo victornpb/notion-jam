@@ -15,12 +15,19 @@ export class NotionModule {
         const articles = [];
         const pages = await this.fetchPagesFromDb(this.database_id);
         for (const page of pages) {
-            const article = {
-                ...toPlainPage(page),
-                ...toPlainProperties(page.properties),
-                markdown: await this.getPageMarkdown(page.id),
-            };
-            articles.push(article);
+            const title = getTitle(page);
+            if (title) {
+                console.log(`Fetching page content (${page.id}) "${title}"...`);
+                const article = {
+                    id: page.id,
+                    title: title,
+                    ...toPlainPage(page),
+                    ...toPlainProperties(page.properties),
+                    markdown: await this.getPageMarkdown(page.id),
+                };
+                articles.push(article);
+            }
+            else console.log (`Skipping ${page.id}, bacause it has no title`);
         };
         return articles;
     }
@@ -35,7 +42,7 @@ export class NotionModule {
                 ]
             }
         });
-
+        // TODO: paginate
         return response.results;
     }
 
@@ -60,8 +67,6 @@ export class NotionModule {
 
 function toPlainPage(page) {
     return {
-        title: getTitle(page),
-
         created_time: page.created_time,
         last_edited_time: page.last_edited_time,
 
@@ -101,7 +106,7 @@ function toPlainProperties(properties) {
             return prop.rich_text[0]?.plain_text;
         },
         date(prop) {
-            return new Date(prop.date.start);
+            return new Date(prop.date?.start);
         },
     };
     const obj = {};
