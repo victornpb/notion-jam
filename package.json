@@ -3,17 +3,30 @@
   "version": "1.0.0",
   "description": "",
   "main": "src/index.js",
+  "type": "module",
   "dependencies": {
     "@actions/core": "^1.6.0",
     "@actions/github": "^5.0.0",
     "@notionhq/client": "^0.4.9",
     "dotenv": "^10.0.0",
-    "notion-to-md": "^1.0.3"
+    "js-yaml": "^4.1.0",
+    "notion-to-md": "^2.3.3",
+    "remark-frontmatter": "^4.0.1",
+    "remark-gfm": "^3.0.1",
+    "remark-images-download": "^3.0.2",
+    "remark-parse": "^10.0.1",
+    "remark-parse-yaml": "^0.0.3",
+    "remark-stringify": "^10.0.2",
+    "remark-toc": "^8.0.1",
+    "remark-twemoji": "^0.1.1",
+    "unified": "^10.1.2"
   },
-  "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node ."
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "engines": {
+    "node": ">=15.0.0"
+  }
 }

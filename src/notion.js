@@ -1,14 +1,14 @@
 
 import { Client } from '@notionhq/client';
-import Notion2md from 'notion-to-md';
-
+import { NotionToMarkdown } from 'notion-to-md';
+import { transformMd } from './transformMd.js';
 
 export class NotionModule {
 
     constructor({ api_key, database_id }) {
         this.database_id = database_id;
         this.notion = new Client({ auth: api_key });
-        this.notion2md = new Notion2md({ notionClient: this.notion });
+        this.notion2md = new NotionToMarkdown({ notionClient: this.notion });
     }
 
     async fetchArticles() {
@@ -18,13 +18,18 @@ export class NotionModule {
             const title = getTitle(page);
             if (title) {
                 console.log(`Fetching page content (${page.id}) "${title}"...`);
+
                 const article = {
                     id: page.id,
                     title: title,
                     ...toPlainPage(page),
                     ...toPlainProperties(page.properties),
-                    markdown: await this.getPageMarkdown(page.id),
+                    content: await this.getPageMarkdown(page.id),
                 };
+
+                // transform markdown
+                article.markdown = await transformMd(article.content, article);
+
                 articles.push(article);
             }
             else console.log (`Skipping ${page.id}, bacause it has no title`);
@@ -106,7 +111,7 @@ function toPlainProperties(properties) {
             return prop.rich_text[0]?.plain_text;
         },
         date(prop) {
-            return new Date(prop.date?.start);
+            return prop.date?.start ? new Date(prop.date?.start) : null;
         },
     };
     const obj = {};
