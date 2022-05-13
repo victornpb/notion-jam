@@ -1,8 +1,6 @@
 
 import { Client } from '@notionhq/client';
 import { NotionToMarkdown } from 'notion-to-md';
-import { transformMd } from './transformMd.js';
-
 export class NotionModule {
 
     constructor({ api_key, database_id }) {
@@ -12,32 +10,22 @@ export class NotionModule {
     }
 
     async fetchArticles() {
-        const articles = [];
-        const pages = await this.fetchPagesFromDb(this.database_id);
-        for (const page of pages) {
-            const title = getTitle(page);
-            if (title) {
-                console.log(`Fetching page content (${page.id}) "${title}"...`);
-
-                const article = {
-                    id: page.id,
-                    title: title,
-                    ...toPlainPage(page),
-                    ...toPlainProperties(page.properties),
-                    content: await this.getPageMarkdown(page.id),
-                };
-
-                // transform markdown
-                article.markdown = await transformMd(article.content, article);
-
-                articles.push(article);
-            }
-            else console.log (`Skipping ${page.id}, bacause it has no title`);
-        };
-        return articles;
+        const pages = await this._fetchPagesFromDb(this.database_id);
+        return pages;
     }
 
-    async fetchPagesFromDb(database_id) {
+    async getArticle(page) {
+        const article = {
+            id: page.id,
+            title: getTitle(page),
+            ...toPlainPage(page),
+            ...toPlainProperties(page.properties),
+            content: await this._getPageMarkdown(page.id),
+        };
+        return article;
+    }
+
+    async _fetchPagesFromDb(database_id) {
         const response = await this.notion.databases.query({
             database_id: database_id,
             filter: {
@@ -51,7 +39,7 @@ export class NotionModule {
         return response.results;
     }
 
-    async getPageMarkdown(page_id) {
+    async _getPageMarkdown(page_id) {
         const mdBlocks = await this.notion2md.pageToMarkdown(page_id);
         return this.notion2md.toMarkdownString(mdBlocks);
     }

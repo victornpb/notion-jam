@@ -1,7 +1,9 @@
-import { NotionModule } from './notion.js';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
+
+import { NotionModule } from './notion.js';
+import { transformMd } from './transformMd.js';
 
 dotenv.config();
 
@@ -13,14 +15,22 @@ async function run() {
 
     const pages = await notionModule.fetchArticles();
     for (const page of pages) {
-        const folderName = page.title.replace(/[^A-z0-9_]/g, '-').toLowerCase();
+
+        const article = await notionModule.getArticle(page);
+
+        const folderName = article.title.replace(/[^A-z0-9_]/g, '-').toLowerCase();
+        const dirPath = path.join('posts/', folderName);
+        const filePath = path.join(dirPath, '/index.md');
+        fs.mkdirSync(dirPath, { recursive: true });
+        
+        // transform markdown
+        article.markdown = await transformMd(article.content, article, dirPath);
+
         // save to disk
-        const filePath = path.join('posts/', folderName, '/index.md');
-        fs.mkdirSync(path.dirname(filePath), { recursive: true });
-        fs.writeFileSync(filePath, page.markdown, 'utf8');
-        console.log(`Saved ${page.id} to ${filePath}`);
+        fs.writeFileSync(filePath, article.markdown, 'utf8');
+        
+        console.log(`Saved ${article.id} to ${filePath}`);
     }
-    console.log(pages);
 
 }
 run();

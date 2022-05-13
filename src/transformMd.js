@@ -2,9 +2,9 @@ import { unified } from "unified";
 import remarkParse from "remark-parse";
 import remarkStringify from "remark-stringify";
 import remarkFrontmatter from "remark-frontmatter";
-// import remarkYmlFrontmatter from "remark-parse-yaml";
+import remarkImagesDownload from './aa/index.js';
 import jsYaml from "js-yaml";
-export async function transformMd(md, data) {
+export async function transformMd(md, data, dir) {
 
     function injectFrontmatter() {
         return function (tree, vFile) {
@@ -23,19 +23,28 @@ export async function transformMd(md, data) {
     }
 
     // parse markdown, modify frontmatter, and stringify
-    const r = unified()
+    const r = await unified()
         .use(remarkParse)
         .use(remarkFrontmatter)
-        // .use(remarkYmlFrontmatter)
         .use(injectFrontmatter)
+        .use(remarkImagesDownload, {
+            disabled: false,
+            downloadDestination: dir,
+            // defaultImagePath: 'black.png',
+            defaultOn: {
+              statusCode: true,
+              mimeType: false,
+              fileTooBig: false,
+            },
+            maxlength: 1000000,
+            dirSizeLimit: 10000000,
+            localUrlToLocalPath: (localUrl) => localPath
+        })
         .use(remarkStringify)
-        .processSync(md);
+        .process(md);
     
-    const str = r.toString();
+    const str = String(r);
     
     return str;
 
 }
-
-
-// import {visit} from 'unist-util-visit'
