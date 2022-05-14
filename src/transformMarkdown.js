@@ -1,10 +1,12 @@
+import path from 'path';
 import { unified } from "unified";
 import remarkParse from "remark-parse";
 import remarkStringify from "remark-stringify";
 import remarkFrontmatter from "remark-frontmatter";
-import remarkImagesDownload from './aa/index.js';
+
+import downloadImgPlugin from "./downloadImgPlugin.js";
 import jsYaml from "js-yaml";
-export async function transformMd(md, data, dir) {
+export async function transformMd(md, data, filePath) {
 
     function injectFrontmatter() {
         return function (tree, vFile) {
@@ -23,28 +25,22 @@ export async function transformMd(md, data, dir) {
     }
 
     // parse markdown, modify frontmatter, and stringify
-    const r = await unified()
+    const markdownFolder = path.dirname(filePath);
+    const vFile = await unified()
         .use(remarkParse)
         .use(remarkFrontmatter)
         .use(injectFrontmatter)
-        .use(remarkImagesDownload, {
-            disabled: false,
-            downloadDestination: dir,
-            // defaultImagePath: 'black.png',
-            defaultOn: {
-              statusCode: true,
-              mimeType: false,
-              fileTooBig: false,
-            },
-            maxlength: 1000000,
-            dirSizeLimit: 10000000,
-            localUrlToLocalPath: (localUrl) => localPath
+        .use(downloadImgPlugin, {
+            outDir: markdownFolder, // where to save images
+            concurrency: 1, // number of concurrent downloads
+            maxFileSize: Infinity, // max file size in bytes
+            skipDownloaded: true, // skip downloading files already exist
+            timeout: 1000 * 30, // timeout in milliseconds
         })
         .use(remarkStringify)
         .process(md);
     
-    const str = String(r);
-    
-    return str;
+    const markdown = String(vFile);
+    return markdown;
 
 }

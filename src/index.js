@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 
 import { NotionModule } from './notion.js';
-import { transformMd } from './transformMd.js';
+import { transformMd } from './transformMarkdown.js';
 
 dotenv.config();
 
@@ -24,7 +24,7 @@ async function run() {
         fs.mkdirSync(dirPath, { recursive: true });
         
         // transform markdown
-        article.markdown = await transformMd(article.content, article, dirPath);
+        article.markdown = await transformMd(article.content, article, filePath);
 
         // save to disk
         fs.writeFileSync(filePath, article.markdown, 'utf8');
