@@ -5,6 +5,7 @@ import https from 'https';
 import crypto from 'crypto';
 import { visit } from 'unist-util-visit';
 import defaults from 'default-args';
+import jsYaml from 'js-yaml';
 import parallel from '../utils/parallel.js';
 
 export default function plugin(options) {
@@ -22,6 +23,46 @@ export default function plugin(options) {
   return async function transform(tree, vfile) {
 
     const imageNodes = [];
+
+    // find frontmatter node and get images
+    visit(tree, 'yaml', async node => {
+
+      function fakeNode(obj, key) {
+        return {
+          type: 'frontmatter-image',
+          get url() {
+            return obj[key];
+          },
+          set url(value) {
+            obj[key] = value;
+          },
+        };
+      }
+
+      const frontmatter = jsYaml.load(node.value);
+
+      // create a proxy object watching for changes to the parsed frontmatter, update the serialized value when changes occur
+      const proxy = new Proxy(frontmatter, {
+        set(target, key, value) {
+          target[key] = value;
+          node.value = jsYaml.dump(frontmatter);
+          return true;
+        }
+      });
+
+      // get images from frontmatter
+      for (const [key, value] of Object.entries(frontmatter)) {
+        if (typeof value === 'string' && value.startsWith('http')) {
+          const url = removeQuery(value);
+          if (url.match(/\.(jpg|png|gif|svg)/)) {
+            imageNodes.push(fakeNode(proxy, key));
+          }
+        }
+      }
+
+    });
+
+
 
     // find images with remote urls
     visit(tree, 'image', async node => {
@@ -172,4 +213,11 @@ function hashFilename(url) {
   const parsedFilenane = path.parse(path.basename(url));
   const newFilename = parsedFilenane.name + '_' + hash + parsedFilenane.ext;
   return newFilename;
+}
+
+
+function removeQuery(url) {
+  const parsedURI = new URL(url);
+  const urlWithoutQuery = new URL(parsedURI.pathname, parsedURI.href).href;
+  return urlWithoutQuery;
 }
