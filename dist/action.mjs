@@ -1,5 +1,5 @@
 /*!
- * NotionJAM v0.0.2 (https://github.com/victornpb/notion-jam)
+ * NotionJAM v0.0.3 (https://github.com/victornpb/notion-jam)
  * Copyright (c) victornpb
  * @license UNLICENSED
  */
@@ -9,7 +9,7 @@ import fs from 'fs';
 import path from 'path';
 import defaults from 'default-args';
 import { Client } from '@notionhq/client';
-import { NotionToMarkdown } from 'notion-to-md';
+import { NotionToMarkdown } from 'notion-to-md/build/notion-to-md.js';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkStringify from 'remark-stringify';

@@ -1,6 +1,6 @@
 
 import { Client } from '@notionhq/client';
-import { NotionToMarkdown } from 'notion-to-md';
+import { NotionToMarkdown } from 'notion-to-md/build/notion-to-md.js';
 
 export class NotionModule {
 

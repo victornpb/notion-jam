@@ -17,10 +17,10 @@
   "homepage": "https://github.com/victornpb/notion-jam",
   "author": "victornpb",
   "action": "dist/action.mjs",
-  "main": "dist/bin.mjs",
-  "bin": "dist/bin.mjs",
+  "main": "dist/cli.mjs",
+  "bin": "dist/cli.mjs",
   "scripts": {
-    "start": "node dist/bin.mjs",
+    "start": "node dist/cli.mjs",
     "build": "rollup -c",
     "watch": "rollup -c -w",
     "prebuild": "rimraf dist",
