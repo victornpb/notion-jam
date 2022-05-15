@@ -5,7 +5,7 @@ import run from './notionJam/index.js';
 
 async function main() {
   try {
-    run({
+    await run({
       notionSecret: process.env.NOTION_SECRET,
       notionDatabase: process.env.NOTION_DATABASE,
       filterProp: process.env.FILTER_PROP,
