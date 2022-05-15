@@ -1,32 +1,32 @@
-# foo-bar
+# notion-jam
 <!-- badge -->
-[![LICENSE](https://img.shields.io/github/license/username/foo-bar?style=flat-square)](LICENSE)
-[![Node](https://img.shields.io/node/v/foo-bar.svg?style=flat-square)](package.json)
-[![CodeFactor](https://www.codefactor.io/repository/github/username/foo-bar/badge?style=flat-square)](https://www.codefactor.io/repository/github/username/foo-bar)
+[![LICENSE](https://img.shields.io/github/license/victornpb/notion-jam?style=flat-square)](LICENSE)
+[![Node](https://img.shields.io/node/v/notion-jam.svg?style=flat-square)](package.json)
+[![CodeFactor](https://www.codefactor.io/repository/github/victornpb/notion-jam/badge?style=flat-square)](https://www.codefactor.io/repository/github/victornpb/notion-jam)
 
-[![Coverage Status](https://img.shields.io/coveralls/username/foo-bar.svg?style=flat-square)](https://coveralls.io/github/username/foo-bar)
-[![Travis](https://img.shields.io/travis/username/foo-bar/master.svg?style=flat-square)](https://travis-ci.org/username/foo-bar)
+[![Coverage Status](https://img.shields.io/coveralls/victornpb/notion-jam.svg?style=flat-square)](https://coveralls.io/github/victornpb/notion-jam)
+[![Travis](https://img.shields.io/travis/victornpb/notion-jam/master.svg?style=flat-square)](https://travis-ci.org/victornpb/notion-jam)
 
-[![Version](https://img.shields.io/npm/v/foo-bar.svg?style=flat-square)](https://www.npmjs.com/package/foo-bar)
-[![Downloads](https://img.shields.io/npm/dt/foo-bar.svg?style=flat-square)](https://www.npmjs.com/package/foo-bar)
-[![](https://img.shields.io/bundlephobia/minzip/foo-bar?style=flat-square)](https://www.npmjs.com/package/foo-bar)
-[![](https://img.shields.io/tokei/lines/github/username/foo-bar?style=flat-square)](https://www.npmjs.com/package/foo-bar)
+[![Version](https://img.shields.io/npm/v/notion-jam.svg?style=flat-square)](https://www.npmjs.com/package/notion-jam)
+[![Downloads](https://img.shields.io/npm/dt/notion-jam.svg?style=flat-square)](https://www.npmjs.com/package/notion-jam)
+[![](https://img.shields.io/bundlephobia/minzip/notion-jam?style=flat-square)](https://www.npmjs.com/package/notion-jam)
+[![](https://img.shields.io/tokei/lines/github/victornpb/notion-jam?style=flat-square)](https://www.npmjs.com/package/notion-jam)
 <!-- endbadge -->
 
-Headline description
+A notion-jam cli / action
 
 ## Installation
 
-### [NPM](https://npmjs.com/package/foo-bar)
+### [NPM](https://npmjs.com/package/notion-jam)
 
-    npm install foo-bar
+    npm install notion-jam
 ### [Yarn](https://github.com/yarnpkg/yarn)
 
-    yarn add foo-bar
+    yarn add notion-jam
 
 ### CDN
 
-    <script type="text/javascript" src="https://unpkg.com/foo-bar/"></script>
+    <script type="text/javascript" src="https://unpkg.com/notion-jam/"></script>
 
 ## Packages
 
