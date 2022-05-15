@@ -1,22 +1,38 @@
-name: 'notion-blogger-action'
-author: Souvik De 
-description: 'Blog to different platforms using github action and notion'
+name: 'notion-jam'
+author: victornpb
+description: 'A export notion pages to markdown and images to be used as a static JAM website'
 branding:
-  color:  gray-black
+  color: gray-dark
   icon: disc
 inputs:
-  GITHUB_TOKEN: 'your GitHub Token'
-    requried: true
-  NOTION_API_KEY:
-    description: 'your notion API key'
-    requried: true
+  GITHUB_TOKEN:
+    description: 'GitHub Token'
+    required: true
+  NOTION_SECRET:
+    description: 'Notion API Token secret'
+    required: true
   NOTION_DATABASE:
-    description: 'your notion database id'
-    requried: true
-  SERVICE_API_KEYS:
-    description: 'json string of api keys for the services'
-    requried: true
+    description: 'Notion Database URL or ID (example: https://notion.so/00112233445566778899aabbccddeeff)'
+    required: true
+  ARTICLE_PATH:
+    description: 'Path template to where to save markdown files (default="posts/{title}/index.md")'
+    required: false
+  ASSETS_PATH:
+    description: 'Path to save images, if started with . will be relative to ARTICLE_PATH, otherwise absolute (default=".")'
+    required: false
+  PARALLEL_PAGES:
+    description: '(default=3)'
+    required: false
+  PARALLEL_DOWNLOADS_PER_PAGE:
+    description: '(default=3)'
+    required: false
+  DOWNLOAD_IMAGE_TIMEOUT:
+    description: '(default=30)'
+    required: false
+  SKIP_DOWNLOADED_IMAGES:
+    description: '(default=true)'
+    required: false
 
 runs:
-  using: node12
-  main: dist/index.js
+  using: node16
+  main: dist/notion-jam.action.js
