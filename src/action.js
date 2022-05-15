@@ -9,8 +9,8 @@ async function main() {
     core.info(`payload action: ${github.context.payload.action}`);
 
     await run({
-      dir: process.env.DIR,
-      notionApiSecret: core.getInput('NOTION_API_SECRET', { required: true }),
+      dir: core.getInput('DIR', { required: true }),
+      notionSecret: core.getInput('NOTION_SECRET', { required: true }),
       notionDatabase: core.getInput('NOTION_DATABASE', { required: true }),
       parallelPages: core.getInput('PARALLEL_PAGES'),
       parallelDownloadsPerPage: core.getInput('PARALLEL_DOWNLOADS_PER_PAGE'),

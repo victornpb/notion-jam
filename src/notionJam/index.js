@@ -11,7 +11,7 @@ export default async function run(options) {
   console.time('run');
 
   options = defaults({
-    notionApiSecret: undefined,
+    notionSecret: undefined,
     notionDatabase: undefined,
 
     parallelPages: 3,
@@ -22,8 +22,8 @@ export default async function run(options) {
   }, options);
 
   const notionModule = new NotionModule({
-    api_key: options.notionApiSecret,
-    database_id: options.notionDatabase,
+    secret: options.notionSecret,
+    database: options.notionDatabase,
   });
 
   console.log('Fetching pages...');

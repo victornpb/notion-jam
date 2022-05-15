@@ -7,7 +7,7 @@ async function main() {
   try {
     run({
       dir: process.env.DIR,
-      notionApiSecret: process.env.NOTION_API_SECRET,
+      notionSecret: process.env.NOTION_SECRET,
       notionDatabase: process.env.NOTION_DATABASE,
       parallelPages: process.env.PARALLEL_PAGES,
       parallelDownloadsPerPage: process.env.PARALLEL_DOWNLOADS_PER_PAGE,
