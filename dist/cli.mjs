@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /*!
- * NotionJAM v0.0.6 (https://github.com/victornpb/notion-jam)
+ * NotionJAM v0.0.7 (https://github.com/victornpb/notion-jam)
  * Copyright (c) victornpb
  * @license UNLICENSED
  */
