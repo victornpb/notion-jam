@@ -1,7 +1,7 @@
 {
   "name": "notion-jam",
   "nameFull": "NotionJAM",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A notion-jam cli / action",
   "license": "UNLICENSED",
   "engines": {
@@ -16,12 +16,9 @@
   },
   "homepage": "https://github.com/victornpb/notion-jam",
   "author": "victornpb",
-
   "action": "dist/notion-jam.action.mjs",
   "main": "dist/notion-jam.bin.js",
   "bin": "dist/notion-jam.bin.js",
-
-
   "scripts": {
     "start": "node dist/notion-jam.bin.js",
     "build": "rollup -c",
