@@ -4,7 +4,7 @@ import remarkStringify from 'remark-stringify';
 import remarkFrontmatter from 'remark-frontmatter';
 
 import injectFrontmatterPlugin from '../remarkPlugin/injectFrontmatter.js';
-import downloadImgPlugin from '../remarkPlugin/downloadImages.js';
+import downloadImgPlugin from '../remarkPlugin/downloadImages/downloadImages.js';
 
 export async function transformMd({ markdown, article, articlePath, assetsPath }, options) {
 
@@ -25,6 +25,7 @@ export async function transformMd({ markdown, article, articlePath, assetsPath }
       markdownPath: articlePath, // used to resolve relative image paths
       concurrency: options.parallelDownloadsPerPage, // number of concurrent downloads
       skipDownloaded: options.skipDownloadedImages, // skip downloading files already exist
+      downloadFrontmatterImages: options.downloadFrontmatterImages, // download images in frontmatter
       timeout: options.downloadImageTimeout, // timeout in milliseconds
       maxFileSize: Infinity, // max file size in bytes
     })

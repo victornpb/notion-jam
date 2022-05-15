@@ -32,6 +32,9 @@ inputs:
   SKIP_DOWNLOADED_IMAGES:
     description: '(default=true)'
     required: false
+  DOWNLOAD_FRONTMATTER_IMAGES:
+    description: 'Downloads image urls in the frontmatter'
+    required: false
 
 runs:
   

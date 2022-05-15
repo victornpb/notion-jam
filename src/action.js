@@ -17,6 +17,7 @@ async function main() {
       parallelDownloadsPerPage: core.getInput('PARALLEL_DOWNLOADS_PER_PAGE'),
       downloadImageTimeout: core.getInput('DOWNLOAD_IMAGE_TIMEOUT'),
       skipDownloadedImages: core.getInput('SKIP_DOWNLOADED_IMAGES'),
+      downloadFrontmatterImages: core.getInput('DOWNLOAD_FRONTMATTER_IMAGES'),
     });
   } catch (error) {
     console.error(error);

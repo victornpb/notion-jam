@@ -2,11 +2,20 @@ import fs from 'fs';
 import path from 'path';
 import http from 'http';
 import https from 'https';
-import crypto from 'crypto';
 import { visit } from 'unist-util-visit';
 import defaults from 'default-args';
 import jsYaml from 'js-yaml';
-import parallel from '../utils/parallel.js';
+
+import parallel from '../../utils/parallel.js';
+import hashFilename from './hashFilename.js';
+import {
+  urlWithoutQuery,
+  isUrl,
+  hasImageExtension,
+  isImage,
+  getSize,
+} from './imageUtils.js';
+
 
 export default function plugin(options) {
 
@@ -17,6 +26,7 @@ export default function plugin(options) {
 
     maxFileSize: Infinity,
     skipDownloaded: false,
+    downloadFrontmatterImages: true,
     timeout: 30,
   }, options);
 
@@ -27,47 +37,41 @@ export default function plugin(options) {
     // find frontmatter node and get images
     visit(tree, 'yaml', async node => {
 
-      function fakeNode(obj, key) {
-        return {
-          type: 'frontmatter-image',
-          get url() {
-            return obj[key];
-          },
-          set url(value) {
-            obj[key] = value;
-          },
-        };
-      }
+      // parse frontmatter
+      const parsedFrontmatter = jsYaml.load(node.value);
+      const updateFrontmatter = () => node.value = jsYaml.dump(parsedFrontmatter);
 
-      const frontmatter = jsYaml.load(node.value);
-
-      // create a proxy object watching for changes to the parsed frontmatter, update the serialized value when changes occur
-      const proxy = new Proxy(frontmatter, {
+      // create a proxy object watching for changes to the parsed frontmatter,
+      // update the serialized value when changes occur
+      const proxy = new Proxy(parsedFrontmatter, {
         set(target, key, value) {
           target[key] = value;
-          node.value = jsYaml.dump(frontmatter);
+          updateFrontmatter();
           return true;
         }
       });
 
-      // get images from frontmatter
-      for (const [key, value] of Object.entries(frontmatter)) {
-        if (typeof value === 'string' && value.startsWith('http')) {
-          const url = removeQuery(value);
-          if (url.match(/\.(jpg|png|gif|svg)/)) {
-            imageNodes.push(fakeNode(proxy, key));
-          }
-        }
+      function fakeImgNode(obj, key) {
+        return {
+          type: 'frontmatter-image',
+          get url() { return obj[key]; },
+          set url(value) { obj[key] = value; },
+        };
       }
 
+      // find image urls inside the frontmatter
+      for (const [key, value] of Object.entries(parsedFrontmatter)) {
+        if (isUrl(value)) {
+          imageNodes.push(fakeImgNode(proxy, key));
+        }
+      }
     });
-
 
 
     // find images with remote urls
     visit(tree, 'image', async node => {
       const { url, position } = node;
-      if (!url.startsWith('http://') && !url.startsWith('https://')) return;
+      if (isUrl(url) === false) return;
 
       try {
         new URL(url);
@@ -80,11 +84,8 @@ export default function plugin(options) {
     await parallel(imageNodes, async (node) => {
       const { url, position } = node;
 
-      const parsedURI = new URL(url);
-      const urlWithoutQuery = new URL(parsedURI.pathname, parsedURI.href).href;
-
       // create a unique filename that is stable across different runs
-      const imageFilename = hashFilename(urlWithoutQuery);
+      const imageFilename = hashFilename(urlWithoutQuery(url));
 
       // resolve paths
       let assetDir;
@@ -188,36 +189,7 @@ function downloadImage(url, targetPath, { timeout = 1000 * 30, maxFileSize = Inf
   });
 }
 
-function isImage(headers) {
-  return headers['content-type'].startsWith('image/');
-}
-
-function getSize(headers = {}) {
-  return parseInt(headers['content-length'] || headers['Content-Length']) || 0;
-}
-
-/**
- * It takes a URL, creates a hash of the URL, and returns a new filename based on the original filename and the hash.
- * So if a document include 2 images with the same name but from different urls, the files will not get overwritten
- * when downloaded to the same folder, each image gets a different suffix hash based on the full URL.
- * @param url - The URL of the file to be downloaded.
- * @returns A new filename with the hash of the url appended to the end of the filename.
- * @author github.com/victornpb
- *
- * @example
- * hashFilename('https://foo.com/site-logo.png') // 'site-logo_tWQ82rOT.png'
- * hashFilename('https://bar.com/site-logo.png') // 'site-logo_azOmiCST.png'
- */
-function hashFilename(url) {
-  const hash = crypto.createHash('sha1').update(url).digest('base64').replace(/[+/=]/g, '').substring(0, 8);
-  const parsedFilenane = path.parse(path.basename(url));
-  const newFilename = parsedFilenane.name + '_' + hash + parsedFilenane.ext;
-  return newFilename;
-}
 
 
-function removeQuery(url) {
-  const parsedURI = new URL(url);
-  const urlWithoutQuery = new URL(parsedURI.pathname, parsedURI.href).href;
-  return urlWithoutQuery;
-}
+
+
