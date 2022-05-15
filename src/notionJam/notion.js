@@ -4,9 +4,12 @@ import { NotionToMarkdown } from 'notion-to-md';
 
 export class NotionModule {
 
-  constructor({ api_key, database_id }) {
-    this.database_id = database_id;
-    this.notion = new Client({ auth: api_key });
+  constructor({ secret, database }) {
+
+    const databaseId = getDatabaseId(database);
+
+    this.database_id = databaseId;
+    this.notion = new Client({ auth: secret });
     this.notion2md = new NotionToMarkdown({ notionClient: this.notion });
   }
 
@@ -114,4 +117,18 @@ function toPlainProperties(properties) {
     }
   }
   return obj;
+}
+
+function getDatabaseId(string) {
+  const isValidId = str => /^[0-9a-f]{32}$/.test(str);
+  if (isValidId(string)) return string;
+  try {
+    const parsedUrl = new URL(string);
+    const id = parsedUrl.pathname.match(/\b([0-9a-f]{32})\b/)[1];
+    if (isValidId(id)) return id;
+    else throw new Error('URL does not contain a valid database id');
+  }
+  catch (error) {
+    throw new Error('Database is not valid databaseID or Notion URL! ' + error);
+  }
 }
