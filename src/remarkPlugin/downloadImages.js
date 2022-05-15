@@ -16,7 +16,7 @@ export default function plugin(options) {
 
     maxFileSize: Infinity,
     skipDownloaded: false,
-    timeout: 1000 * 30,
+    timeout: 30,
   }, options);
 
   return async function transform(tree, vfile) {
@@ -74,7 +74,7 @@ export default function plugin(options) {
         try {
           result = await downloadImage(url, assetFilePath, {
             maxFileSize: options.maxFileSize,
-            timeout: options.timeout,
+            timeout: options.timeout * 1000,
           });
           // console.log(`Downloaded ${url}`);
         }

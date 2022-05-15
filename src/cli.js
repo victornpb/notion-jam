@@ -6,9 +6,10 @@ import run from './notionJam/index.js';
 async function main() {
   try {
     run({
-      dir: process.env.DIR,
       notionSecret: process.env.NOTION_SECRET,
       notionDatabase: process.env.NOTION_DATABASE,
+      articlePath: process.env.ARTICLE_PATH,
+      assetsPath: process.env.ASSETS_PATH,
       parallelPages: process.env.PARALLEL_PAGES,
       parallelDownloadsPerPage: process.env.PARALLEL_DOWNLOADS_PER_PAGE,
       downloadImageTimeout: process.env.DOWNLOAD_IMAGE_TIMEOUT,
