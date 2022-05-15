@@ -21,9 +21,62 @@ import https from 'https';
 import { visit } from 'unist-util-visit';
 import crypto from 'crypto';
 
+/*!
+ * Unit tests
+ * @see https://jsfiddle.net/Victornpb/80sgj5rx/
+ */
+
+
+function toCamelCase(str) {
+  return tokenize(str).map((piece, i) => i > 0 ? piece.charAt(0).toUpperCase() + piece.slice(1).toLowerCase() : piece.toLowerCase()).join('');
+}
+
+function toPascalCase(str) {
+  return tokenize(str).map(piece => piece.charAt(0).toUpperCase() + piece.slice(1).toLowerCase()).join('');
+}
+
+function toKebabCase(str) {
+  return tokenize(str).join('-').toLowerCase();
+}
+
+function toSnakeCase(str) {
+  return tokenize(str).join('_').toLowerCase();
+}
+
+function tokenize(str) {
+  return str.trim().match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g) || [];
+}
+
+const caseTransforms = {
+  camel: toCamelCase,
+  pascal: toPascalCase,
+  kebab: toKebabCase,
+  snake: toSnakeCase,
+  none: str => str,
+};
+
+function convertPropsCase(obj, caseType) {
+  const toCase = caseTransforms[caseType];
+  if (!toCase) throw new Error(`Unknown case type: ${caseType}! Valid values are: ${Object.keys(caseTransforms)}`);
+
+  const newObj = {};
+  for (const prop of Object.keys(obj)) {
+    newObj[toCase(prop)] = obj[prop];
+  }
+  return newObj;
+}
+
 class NotionModule {
 
-  constructor({ secret, database }) {
+  constructor({ secret, database }, options) {
+
+    this.options = defaults({
+      filterProp: 'Status',
+      filterValues: 'Ready,Published',
+      caseType: 'snake',
+    }, options);
+
+    this.options.filterValues = Array.isArray(this.options.filterValues) ? this.options.filterValues : this.options.filterValues.split(',').map(value => value.trim());
 
     const databaseId = getDatabaseId(database);
 
@@ -38,13 +91,18 @@ class NotionModule {
   }
 
   async getArticle(page) {
-    const article = {
+    let article = {
       id: page.id,
       title: getTitle(page),
       ...toPlainPage(page),
       ...toPlainProperties(page.properties),
       content: await this._getPageMarkdown(page.id),
     };
+
+    if (this.options.caseType) {
+      article = convertPropsCase(article, this.options.caseType);
+    }
+
     return article;
   }
 
@@ -53,8 +111,9 @@ class NotionModule {
       database_id: database_id,
       filter: {
         or: [
-          { property: 'Status', select: { equals: 'Ready' } },
-          { property: 'Status', select: { equals: 'Published' } }
+          ...this.options.filterValues.map(value => ({
+            property: this.options.filterProp, select: { equals: value }
+          })),
         ]
       }
     });
@@ -83,8 +142,8 @@ class NotionModule {
 
 function toPlainPage(page) {
   return {
-    created_time: page.created_time,
-    last_edited_time: page.last_edited_time,
+    created_time: new Date(page.created_time),
+    last_edited_time: new Date(page.last_edited_time),
 
     cover_image: page.cover?.external?.url,
 
@@ -500,6 +559,10 @@ async function run(options) {
     notionSecret: undefined,
     notionDatabase: undefined,
 
+    filterProp: 'Status',
+    filterValues: 'Ready,Published',
+    caseType: 'snake',
+
     parallelPages: 3,
     parallelDownloadsPerPage: 3,
     downloadImageTimeout: 30,
@@ -516,7 +579,7 @@ async function run(options) {
   const notionModule = new NotionModule({
     secret: options.notionSecret,
     database: options.notionDatabase,
-  });
+  }, options);
 
   console.log('Fetching pages...');
   const pages = await notionModule.fetchArticles();
@@ -554,6 +617,9 @@ async function main() {
     run({
       notionSecret: process.env.NOTION_SECRET,
       notionDatabase: process.env.NOTION_DATABASE,
+      filterProp: process.env.FILTER_PROP,
+      filterValues: process.env.FILTER_VALUES,
+      caseType: process.env.CONVERT_PROP_CASE,
       articlePath: process.env.ARTICLE_PATH,
       assetsPath: process.env.ASSETS_PATH,
       parallelPages: process.env.PARALLEL_PAGES,
