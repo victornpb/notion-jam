@@ -1,5 +1,5 @@
 /*!
- * NotionJAM v0.0.7 (https://github.com/victornpb/notion-jam)
+ * NotionJAM v0.0.8 (https://github.com/victornpb/notion-jam)
  * Copyright (c) victornpb
  * @license UNLICENSED
  */
