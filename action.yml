@@ -1,9 +1,9 @@
 name: 'notion-jam'
 author: victornpb
-description: 'A export notion pages to markdown and images to be used as a static JAM website'
+description: 'A export Notion pages to markdown and images to be used as JAM stack (static website, github pages, eleventy...)'
 branding:
   color: gray-dark
-  icon: disc
+  icon: book
 inputs:
   GITHUB_TOKEN:
     description: 'GitHub Token'
