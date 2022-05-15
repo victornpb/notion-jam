@@ -1,10 +1,20 @@
 
+import defaults from 'default-args';
 import { Client } from '@notionhq/client';
 import { NotionToMarkdown } from 'notion-to-md/build/notion-to-md.js';
+import { convertPropsCase } from '../utils/transformVariables.js';
 
 export class NotionModule {
 
-  constructor({ secret, database }) {
+  constructor({ secret, database }, options) {
+
+    this.options = defaults({
+      filterProp: 'Status',
+      filterValues: 'Ready,Published',
+      caseType: 'snake',
+    }, options);
+
+    this.options.filterValues = Array.isArray(this.options.filterValues) ? this.options.filterValues : this.options.filterValues.split(',').map(value => value.trim());
 
     const databaseId = getDatabaseId(database);
 
@@ -19,13 +29,18 @@ export class NotionModule {
   }
 
   async getArticle(page) {
-    const article = {
+    let article = {
       id: page.id,
       title: getTitle(page),
       ...toPlainPage(page),
       ...toPlainProperties(page.properties),
       content: await this._getPageMarkdown(page.id),
     };
+
+    if (this.options.caseType) {
+      article = convertPropsCase(article, this.options.caseType);
+    }
+
     return article;
   }
 
@@ -34,8 +49,9 @@ export class NotionModule {
       database_id: database_id,
       filter: {
         or: [
-          { property: 'Status', select: { equals: 'Ready' } },
-          { property: 'Status', select: { equals: 'Published' } }
+          ...this.options.filterValues.map(value => ({
+            property: this.options.filterProp, select: { equals: value }
+          })),
         ]
       }
     });
@@ -64,8 +80,8 @@ export class NotionModule {
 
 function toPlainPage(page) {
   return {
-    created_time: page.created_time,
-    last_edited_time: page.last_edited_time,
+    created_time: new Date(page.created_time),
+    last_edited_time: new Date(page.last_edited_time),
 
     cover_image: page.cover?.external?.url,
 

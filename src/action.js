@@ -11,6 +11,9 @@ async function main() {
     await run({
       notionSecret: core.getInput('NOTION_SECRET', { required: true }),
       notionDatabase: core.getInput('NOTION_DATABASE', { required: true }),
+      filterProp: core.getInput('FILTER_PROP'),
+      filterValues: core.getInput('FILTER_VALUES'),
+      caseType: core.getInput('CONVERT_PROP_CASE'),
       articlePath: core.getInput('ARTICLE_PATH'),
       assetsPath: core.getInput('ASSETS_PATH'),
       parallelPages: core.getInput('PARALLEL_PAGES'),

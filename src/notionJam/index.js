@@ -17,6 +17,10 @@ export default async function run(options) {
     notionSecret: undefined,
     notionDatabase: undefined,
 
+    filterProp: 'Status',
+    filterValues: 'Ready,Published',
+    caseType: 'snake',
+
     parallelPages: 3,
     parallelDownloadsPerPage: 3,
     downloadImageTimeout: 30,
@@ -33,7 +37,7 @@ export default async function run(options) {
   const notionModule = new NotionModule({
     secret: options.notionSecret,
     database: options.notionDatabase,
-  });
+  }, options);
 
   console.log('Fetching pages...');
   const pages = await notionModule.fetchArticles();

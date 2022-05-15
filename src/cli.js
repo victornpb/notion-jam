@@ -8,6 +8,9 @@ async function main() {
     run({
       notionSecret: process.env.NOTION_SECRET,
       notionDatabase: process.env.NOTION_DATABASE,
+      filterProp: process.env.FILTER_PROP,
+      filterValues: process.env.FILTER_VALUES,
+      caseType: process.env.CONVERT_PROP_CASE,
       articlePath: process.env.ARTICLE_PATH,
       assetsPath: process.env.ASSETS_PATH,
       parallelPages: process.env.PARALLEL_PAGES,
