@@ -16,11 +16,11 @@
   },
   "homepage": "https://github.com/victornpb/notion-jam",
   "author": "victornpb",
-  "action": "dist/notion-jam.action.mjs",
-  "main": "dist/notion-jam.bin.js",
-  "bin": "dist/notion-jam.bin.js",
+  "action": "dist/action.mjs",
+  "main": "dist/bin.mjs",
+  "bin": "dist/bin.mjs",
   "scripts": {
-    "start": "node dist/notion-jam.bin.js",
+    "start": "node dist/bin.mjs",
     "build": "rollup -c",
     "watch": "rollup -c -w",
     "prebuild": "rimraf dist",
@@ -31,7 +31,9 @@
     "release": "np --any-branch"
   },
   "files": [
-    "dist"
+    "dist",
+    "action.yml",
+    ".env.example"
   ],
   "keywords": [
     "notion",

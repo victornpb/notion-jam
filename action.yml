@@ -35,4 +35,4 @@ inputs:
 
 runs:
   using: node16
-  main: dist/notion-jam.action.js
+  main: dist/action.mjs
