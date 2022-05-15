@@ -1,0 +1,71 @@
+{
+	"name": "any-observable",
+	"version": "0.5.1",
+	"description": "Support any Observable library and polyfill",
+	"license": "MIT",
+	"repository": "sindresorhus/any-observable",
+	"funding": "https://github.com/sponsors/sindresorhus",
+	"author": {
+		"name": "Sindre Sorhus",
+		"email": "sindresorhus@gmail.com",
+		"url": "sindresorhus.com"
+	},
+	"engines": {
+		"node": ">=8"
+	},
+	"scripts": {
+		"test": "xo && ava"
+	},
+	"files": [
+		"index.js",
+		"implementation.js",
+		"loader.js",
+		"register.js",
+		"register-shim.js",
+		"register"
+	],
+	"keywords": [
+		"observable",
+		"observables",
+		"support",
+		"polyfill",
+		"any",
+		"rxjs"
+	],
+	"devDependencies": {
+		"arrify": "^2.0.1",
+		"ava": "^1.4.1",
+		"browserify": "^16.2.0",
+		"execa": "^1.0.0",
+		"karma": "^4.1.0",
+		"karma-browserify": "^6.0.0",
+		"karma-chrome-launcher": "^2.2.0",
+		"karma-mocha": "^1.3.0",
+		"mocha": "^6.1.4",
+		"rxjs": "^6.5.3",
+		"watchify": "^3.11.0",
+		"xo": "^0.24.0",
+		"zen-observable": "^0.8.8"
+	},
+	"peerDependenciesMeta": {
+		"rxjs": {
+			"optional": true
+		},
+		"zen-observable": {
+			"optional": true
+		}
+	},
+	"browser": {
+		"./register.js": "./register-shim.js"
+	},
+	"xo": {
+		"overrides": [
+			{
+				"files": "browser/tests/**",
+				"envs": [
+					"mocha"
+				]
+			}
+		]
+	}
+}

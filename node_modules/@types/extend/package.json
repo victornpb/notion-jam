@@ -1,0 +1,23 @@
+{
+    "name": "@types/extend",
+    "version": "3.0.1",
+    "description": "TypeScript definitions for extend",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "Stefan Steinhart",
+            "url": "https://github.com/reppners",
+            "githubUsername": "reppners"
+        }
+    ],
+    "main": "",
+    "types": "index",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git"
+    },
+    "scripts": {},
+    "dependencies": {},
+    "typesPublisherContentHash": "b979a2f4dee0070938a20acff0e2a204cd85d8821980fa63a2ce4a3b4db5c445",
+    "typeScriptVersion": "2.0"
+}

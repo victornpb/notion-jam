@@ -1,0 +1,18 @@
+/// <reference lib="dom" />
+import type { Await } from "./type-utils";
+import type { RequestInit as NodeRequestInit, Response as NodeResponse } from "node-fetch";
+declare type FetchFn = typeof fetch;
+declare type FetchResponse = Await<ReturnType<FetchFn>>;
+declare type RequestInit = NonNullable<Parameters<FetchFn>[1]>;
+export declare type SupportedRequestInfo = string;
+export declare type SupportedRequestInit = {
+    agent?: NodeRequestInit["agent"];
+    body?: NonNullable<RequestInit["body"]> & NonNullable<NodeRequestInit["body"]>;
+    headers?: NonNullable<RequestInit["headers"]> & NonNullable<NodeRequestInit["headers"]>;
+    method?: RequestInit["method"];
+    redirect?: RequestInit["redirect"];
+};
+export declare type SupportedResponse = FetchResponse | NodeResponse;
+export declare type SupportedFetch = (url: SupportedRequestInfo, init?: SupportedRequestInit) => Promise<SupportedResponse>;
+export {};
+//# sourceMappingURL=fetch-types.d.ts.map
