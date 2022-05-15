@@ -7,7 +7,7 @@ import remarkFrontmatter from 'remark-frontmatter';
 import injectFrontmatterPlugin from '../remarkPlugin/injectFrontmatter.js';
 import downloadImgPlugin from '../remarkPlugin/downloadImages.js';
 
-export async function transformMd({ markdown, article, filePath }, options) {
+export async function transformMd({ markdown, article, articlePath, assetsPath }, options) {
 
   // create frontmatter
   const frontmatter = {
@@ -17,13 +17,13 @@ export async function transformMd({ markdown, article, filePath }, options) {
   delete frontmatter.markdown;
 
   // parse markdown, add frontmatter, download images, and stringify
-  const markdownFolder = path.dirname(filePath);
   const vFile = await unified()
     .use(remarkParse)
     .use(remarkFrontmatter)
     .use(injectFrontmatterPlugin, frontmatter)
     .use(downloadImgPlugin, {
-      outDir: markdownFolder, // where to save images
+      outDir: assetsPath, // where to save images
+      markdownPath: articlePath, // used to resolve relative image paths
       concurrency: options.parallelDownloadsPerPage, // number of concurrent downloads
       skipDownloaded: options.skipDownloadedImages, // skip downloading files already exist
       timeout: options.downloadImageTimeout, // timeout in milliseconds

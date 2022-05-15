@@ -5,6 +5,8 @@ import defaults from 'default-args';
 import { NotionModule } from './notion.js';
 import { transformMd } from './transformMarkdown.js';
 import parallel from '../utils/parallel.js';
+import safeName from '../utils/safeName.js';
+import format from '../utils/format.js';
 
 
 export default async function run(options) {
@@ -18,7 +20,8 @@ export default async function run(options) {
     parallelDownloadsPerPage: 3,
     downloadImageTimeout: 1000 * 30,
     skipDownloadedImages: true,
-    dir: './posts',
+    articlePath: 'posts/{title}/index.md',
+    assetsPath: 'posts/images/',
   }, options);
 
   const notionModule = new NotionModule({
@@ -33,22 +36,22 @@ export default async function run(options) {
 
     const article = await notionModule.getArticle(page);
 
-    const folderName = article.title.replace(/[^A-z0-9_]/g, '-').toLowerCase();
-    const dirPath = path.join(options.dir, folderName);
-    const filePath = path.join(dirPath, '/index.md');
-    await fs.promises.mkdir(dirPath, { recursive: true });
+    const articlePath = format(options.articlePath, article, val => safeName(val));
+    const assetsPath = format(options.assetsPath, article, val => safeName(val));
 
     // transform markdown
     article.markdown = await transformMd({
       markdown: article.content,
       article,
-      filePath,
+      articlePath: articlePath,
+      assetsPath,
     }, options);
 
     // save markdown to disk
-    await fs.promises.writeFile(filePath, article.markdown, 'utf8');
+    await fs.promises.mkdir(path.dirname(articlePath), { recursive: true });
+    await fs.promises.writeFile(articlePath, article.markdown, 'utf8');
 
-    console.log(`Created '${filePath}' from "${article.title}" (${article.id})`);
+    console.log(`Created '${articlePath}' from "${article.title}" (${article.id})`);
   }, options.parallelPages);
 
   console.log('Done!');

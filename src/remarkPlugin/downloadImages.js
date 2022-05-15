@@ -12,6 +12,7 @@ export default function plugin(options) {
   options = defaults({
     concurrency: 1,
     outDir: './',
+    markdownPath: '',
 
     maxFileSize: Infinity,
     skipDownloaded: false,
@@ -35,10 +36,6 @@ export default function plugin(options) {
       imageNodes.push(node);
     });
 
-    if (imageNodes.length > 0) {
-      await fs.promises.mkdir(options.outDir, { recursive: true });
-    }
-
     await parallel(imageNodes, async (node) => {
       const { url, position } = node;
 
@@ -47,19 +44,35 @@ export default function plugin(options) {
 
       // create a unique filename that is stable across different runs
       const imageFilename = hashFilename(urlWithoutQuery);
-      const destination = path.join(options.outDir, imageFilename);
-      const src = './' + imageFilename; // TODO: allow static path instead of relative
+
+      // resolve paths
+      let assetDir;
+      let assetFilePath;
+      let markdownFolder = path.dirname(options.markdownPath);
+      if (options.outDir.startsWith('.')) {
+        // assetPath is relative to the markdown file
+        assetDir = path.join(markdownFolder, options.outDir);
+        assetFilePath = path.join(assetDir, imageFilename);
+      }
+      else {
+        // assetPath is relative to the cwd
+        assetDir = path.join(options.outDir);
+        assetFilePath = path.join(assetDir, imageFilename);
+      }
 
       let result;
-      if (options.skipDownloaded && fs.existsSync(destination)) {
+      if (options.skipDownloaded && fs.existsSync(assetFilePath)) {
         // skip downloading file already exists
         // console.log(`Skipping ${url}`);
         result = true;
       }
       else {
+
+        await fs.promises.mkdir(assetDir, { recursive: true });
+
         // download image
         try {
-          result = await downloadImage(url, destination, {
+          result = await downloadImage(url, assetFilePath, {
             maxFileSize: options.maxFileSize,
             timeout: options.timeout,
           });
@@ -73,6 +86,7 @@ export default function plugin(options) {
 
       if (result) {
         // rewrite ![image](url) with the local path
+        const src = options.outDir.startsWith('.') ? './' + path.relative(markdownFolder, assetFilePath) : assetFilePath;
         node.url = src;
       }
     }, options.concurrency);
