@@ -30,6 +30,7 @@
     "test": "npm run lint && npm run build",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
+    "version": "npm run build",
     "release": "np --any-branch"
   },
   "files": [
