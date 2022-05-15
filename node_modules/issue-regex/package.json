@@ -1,0 +1,44 @@
+{
+	"name": "issue-regex",
+	"version": "3.1.0",
+	"description": "Regular expression for matching issue references",
+	"license": "MIT",
+	"repository": "sindresorhus/issue-regex",
+	"author": {
+		"name": "Sindre Sorhus",
+		"email": "sindresorhus@gmail.com",
+		"url": "sindresorhus.com"
+	},
+	"engines": {
+		"node": ">=10"
+	},
+	"scripts": {
+		"test": "xo && ava && tsd"
+	},
+	"files": [
+		"index.js",
+		"index.d.ts"
+	],
+	"keywords": [
+		"issue",
+		"issues",
+		"pr",
+		"pull",
+		"request",
+		"reference",
+		"references",
+		"ref",
+		"regex",
+		"regexp",
+		"regular",
+		"expression",
+		"github",
+		"gh",
+		"link"
+	],
+	"devDependencies": {
+		"ava": "^1.4.1",
+		"tsd": "^0.7.2",
+		"xo": "^0.24.0"
+	}
+}
