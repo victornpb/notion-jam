@@ -1,5 +1,5 @@
 /*!
- * NotionJAM v0.0.3 (https://github.com/victornpb/notion-jam)
+ * NotionJAM v0.0.4 (https://github.com/victornpb/notion-jam)
  * Copyright (c) victornpb
  * @license UNLICENSED
  */
@@ -17,8 +17,8 @@ import remarkFrontmatter from 'remark-frontmatter';
 import jsYaml from 'js-yaml';
 import http from 'http';
 import https from 'https';
-import crypto from 'crypto';
 import { visit } from 'unist-util-visit';
+import crypto from 'crypto';
 
 class NotionModule {
 
@@ -118,7 +118,8 @@ function toPlainProperties(properties) {
       return prop.date?.start ? new Date(prop.date?.start) : null;
     },
     files(prop) {
-      return prop.files?.map(file => file.file?.url);
+      const urls = prop.files?.map(file => file.file?.url || file.external?.url);
+      return urls.length <= 1 ? urls[0] : urls;
     },
     checkbox(prop) {
       return prop.checkbox;
@@ -197,6 +198,42 @@ function parallel(items, handler, concurrency) {
   });
 }
 
+/**
+ * It takes a URL, creates a hash of the URL, and returns a new filename based on the original filename and the hash.
+ * So if a document include 2 images with the same name but from different urls, the files will not get overwritten
+ * when downloaded to the same folder, each image gets a different suffix hash based on the full URL.
+ * @param url - The URL of the file to be downloaded.
+ * @returns A new filename with the hash of the url appended to the end of the filename.
+ * @author github.com/victornpb
+ *
+ * @example
+ * hashFilename('https://foo.com/site-logo.png') // 'site-logo_tWQ82rOT.png'
+ * hashFilename('https://bar.com/site-logo.png') // 'site-logo_azOmiCST.png'
+ */
+function hashFilename(url) {
+  const hash = crypto.createHash('sha1').update(url).digest('base64').replace(/[+/=]/g, '').substring(0, 8);
+  const parsedFilenane = path.parse(path.basename(url));
+  const newFilename = parsedFilenane.name + '_' + hash + parsedFilenane.ext;
+  return newFilename;
+}
+
+function isUrl(url) {
+  return /^https?:\/\//.test(url);
+}
+
+function urlWithoutQuery(url) {
+  const parsedURI = new URL(url);
+  return new URL(parsedURI.pathname, parsedURI.href).href;
+}
+
+function isImage(headers) {
+  return headers['content-type'].startsWith('image/');
+}
+
+function getSize(headers = {}) {
+  return parseInt(headers['content-length'] || headers['Content-Length']) || 0;
+}
+
 function plugin(options) {
 
   options = defaults({
@@ -206,6 +243,7 @@ function plugin(options) {
 
     maxFileSize: Infinity,
     skipDownloaded: false,
+    downloadFrontmatterImages: true,
     timeout: 30,
   }, options);
 
@@ -213,10 +251,44 @@ function plugin(options) {
 
     const imageNodes = [];
 
+    // find frontmatter node and get images
+    visit(tree, 'yaml', async node => {
+
+      // parse frontmatter
+      const parsedFrontmatter = jsYaml.load(node.value);
+      const updateFrontmatter = () => node.value = jsYaml.dump(parsedFrontmatter);
+
+      // create a proxy object watching for changes to the parsed frontmatter,
+      // update the serialized value when changes occur
+      const proxy = new Proxy(parsedFrontmatter, {
+        set(target, key, value) {
+          target[key] = value;
+          updateFrontmatter();
+          return true;
+        }
+      });
+
+      function fakeImgNode(obj, key) {
+        return {
+          type: 'frontmatter-image',
+          get url() { return obj[key]; },
+          set url(value) { obj[key] = value; },
+        };
+      }
+
+      // find image urls inside the frontmatter
+      for (const [key, value] of Object.entries(parsedFrontmatter)) {
+        if (isUrl(value)) {
+          imageNodes.push(fakeImgNode(proxy, key));
+        }
+      }
+    });
+
+
     // find images with remote urls
     visit(tree, 'image', async node => {
       const { url, position } = node;
-      if (!url.startsWith('http://') && !url.startsWith('https://')) return;
+      if (isUrl(url) === false) return;
 
       try {
         new URL(url);
@@ -229,11 +301,8 @@ function plugin(options) {
     await parallel(imageNodes, async (node) => {
       const { url, position } = node;
 
-      const parsedURI = new URL(url);
-      const urlWithoutQuery = new URL(parsedURI.pathname, parsedURI.href).href;
-
       // create a unique filename that is stable across different runs
-      const imageFilename = hashFilename(urlWithoutQuery);
+      const imageFilename = hashFilename(urlWithoutQuery(url));
 
       // resolve paths
       let assetDir;
@@ -337,33 +406,6 @@ function downloadImage(url, targetPath, { timeout = 1000 * 30, maxFileSize = Inf
   });
 }
 
-function isImage(headers) {
-  return headers['content-type'].startsWith('image/');
-}
-
-function getSize(headers = {}) {
-  return parseInt(headers['content-length'] || headers['Content-Length']) || 0;
-}
-
-/**
- * It takes a URL, creates a hash of the URL, and returns a new filename based on the original filename and the hash.
- * So if a document include 2 images with the same name but from different urls, the files will not get overwritten
- * when downloaded to the same folder, each image gets a different suffix hash based on the full URL.
- * @param url - The URL of the file to be downloaded.
- * @returns A new filename with the hash of the url appended to the end of the filename.
- * @author github.com/victornpb
- *
- * @example
- * hashFilename('https://foo.com/site-logo.png') // 'site-logo_tWQ82rOT.png'
- * hashFilename('https://bar.com/site-logo.png') // 'site-logo_azOmiCST.png'
- */
-function hashFilename(url) {
-  const hash = crypto.createHash('sha1').update(url).digest('base64').replace(/[+/=]/g, '').substring(0, 8);
-  const parsedFilenane = path.parse(path.basename(url));
-  const newFilename = parsedFilenane.name + '_' + hash + parsedFilenane.ext;
-  return newFilename;
-}
-
 async function transformMd({ markdown, article, articlePath, assetsPath }, options) {
 
   // create frontmatter
@@ -383,6 +425,7 @@ async function transformMd({ markdown, article, articlePath, assetsPath }, optio
       markdownPath: articlePath, // used to resolve relative image paths
       concurrency: options.parallelDownloadsPerPage, // number of concurrent downloads
       skipDownloaded: options.skipDownloadedImages, // skip downloading files already exist
+      downloadFrontmatterImages: options.downloadFrontmatterImages, // download images in frontmatter
       timeout: options.downloadImageTimeout, // timeout in milliseconds
       maxFileSize: Infinity, // max file size in bytes
     })
@@ -518,6 +561,7 @@ async function main() {
       parallelDownloadsPerPage: core.getInput('PARALLEL_DOWNLOADS_PER_PAGE'),
       downloadImageTimeout: core.getInput('DOWNLOAD_IMAGE_TIMEOUT'),
       skipDownloadedImages: core.getInput('SKIP_DOWNLOADED_IMAGES'),
+      downloadFrontmatterImages: core.getInput('DOWNLOAD_FRONTMATTER_IMAGES'),
     });
   } catch (error) {
     console.error(error);
