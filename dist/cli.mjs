@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /*!
- * NotionJAM v0.0.8 (https://github.com/victornpb/notion-jam)
+ * NotionJAM v0.0.9 (https://github.com/victornpb/notion-jam)
  * Copyright (c) victornpb
  * @license UNLICENSED
  */
@@ -239,7 +239,7 @@ function plugin$1(frontmatter) {
 function parallel(items, handler, concurrency) {
   if (!Number.isInteger(concurrency) || concurrency < 1)
     throw new Error('concurrency must be a positive integer greater than 0');
-
+  if (items.length === 0) return Promise.resolve([]);
   return new Promise((resolve, reject) => {
     const results = [];
     let i = 0;
@@ -247,13 +247,17 @@ function parallel(items, handler, concurrency) {
     const next = (result) => {
       results.push(result);
       if (i < items.length) {
-        handler(items[i++]).then(next).catch(reject);
+        try {
+          handler(items[i++]).then(next).catch(reject);
+        } catch (err) { reject(err); }
       }
       else if (results.length === items.length) resolve(results);
     };
 
     for (let x = 0; x < Math.min(concurrency, items.length); x++) {
-      handler(items[i++]).then(next).catch(reject);
+      try {
+        handler(items[i++]).then(next).catch(reject);
+      } catch (err) { reject(err); break; }
     }
   });
 }
@@ -563,7 +567,7 @@ async function run(options) {
     filterValues: 'Ready,Published',
     caseType: 'snake',
 
-    parallelPages: 3,
+    parallelPages: 25,
     parallelDownloadsPerPage: 3,
     downloadImageTimeout: 30,
     skipDownloadedImages: true,
@@ -614,7 +618,7 @@ dotenv.config();
 
 async function main() {
   try {
-    run({
+    await run({
       notionSecret: process.env.NOTION_SECRET,
       notionDatabase: process.env.NOTION_DATABASE,
       filterProp: process.env.FILTER_PROP,
