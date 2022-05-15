@@ -21,7 +21,7 @@ export default async function run(options) {
     filterValues: 'Ready,Published',
     caseType: 'snake',
 
-    parallelPages: 3,
+    parallelPages: 25,
     parallelDownloadsPerPage: 3,
     downloadImageTimeout: 30,
     skipDownloadedImages: true,
