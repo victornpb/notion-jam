@@ -7,6 +7,7 @@ import { transformMd } from './transformMarkdown.js';
 import parallel from '../utils/parallel.js';
 import safeName from '../utils/safeName.js';
 import format from '../utils/format.js';
+import { toBool, toInt } from '../utils/cast.js';
 
 
 export default async function run(options) {
@@ -18,11 +19,16 @@ export default async function run(options) {
 
     parallelPages: 3,
     parallelDownloadsPerPage: 3,
-    downloadImageTimeout: 1000 * 30,
+    downloadImageTimeout: 30,
     skipDownloadedImages: true,
     articlePath: 'posts/{title}/index.md',
-    assetsPath: 'posts/images/',
+    assetsPath: '.', // relative to the markdown file if starts with '.', or absolute otherwise
   }, options);
+
+  options.parallelPages = toInt(options.parallelPages);
+  options.parallelDownloadsPerPage = toInt(options.parallelDownloadsPerPage);
+  options.downloadImageTimeout = toInt(options.downloadImageTimeout);
+  options.skipDownloadedImages = toBool(options.skipDownloadedImages);
 
   const notionModule = new NotionModule({
     secret: options.notionSecret,
