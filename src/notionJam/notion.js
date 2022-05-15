@@ -68,9 +68,9 @@ function toPlainPage(page) {
     last_edited_time: page.last_edited_time,
 
     cover_image: page.cover?.external?.url,
-    icon: page.icon?.external?.url,
 
-    //properties: toPlainProperties(page.properties),
+    icon_image: page.icon?.file?.url,
+    icon_emoji: page.icon?.emoji,
   };
 }
 
@@ -81,29 +81,44 @@ function getTitle(page) {
 
 function toPlainProperties(properties) {
   const types = {
-    checkbox(prop) {
-      return prop.checkbox;
+    title(prop) {
+      return prop.title[0]?.plain_text;
+    },
+    rich_text(prop) {
+      return prop.rich_text[0]?.plain_text;
+    },
+    number(prop) {
+      return prop.number;
+    },
+    select(prop) {
+      return prop.select.name;
     },
     multi_select(prop) {
       return prop.multi_select.map(s => s.name);
+    },
+    date(prop) {
+      return prop.date?.start ? new Date(prop.date?.start) : null;
+    },
+    files(prop) {
+      return prop.files?.map(file => file.file?.url);
+    },
+    checkbox(prop) {
+      return prop.checkbox;
+    },
+    url(prop) {
+      return prop.url;
+    },
+    email(prop) {
+      return prop.email;
+    },
+    phone_number(prop) {
+      return prop.phone_number;
     },
     created_time(prop) {
       return new Date(prop.created_time);
     },
     last_edited_time(prop) {
       return new Date(prop.last_edited_time);
-    },
-    title(prop) {
-      return prop.title[0]?.plain_text;
-    },
-    select(prop) {
-      return prop.select.name;
-    },
-    rich_text(prop) {
-      return prop.rich_text[0]?.plain_text;
-    },
-    date(prop) {
-      return prop.date?.start ? new Date(prop.date?.start) : null;
     },
   };
   const obj = {};
@@ -113,7 +128,7 @@ function toPlainProperties(properties) {
     }
     else {
       console.warn(`Unknown block type: ${value.type}`);
-      obj[key] = value;
+      obj[key] = value[value.type];
     }
   }
   return obj;
