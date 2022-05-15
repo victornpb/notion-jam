@@ -100,7 +100,8 @@ function toPlainProperties(properties) {
       return prop.date?.start ? new Date(prop.date?.start) : null;
     },
     files(prop) {
-      return prop.files?.map(file => file.file?.url);
+      const urls = prop.files?.map(file => file.file?.url || file.external?.url);
+      return urls.length <= 1 ? urls[0] : urls;
     },
     checkbox(prop) {
       return prop.checkbox;
