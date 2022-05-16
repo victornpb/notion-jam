@@ -107,7 +107,7 @@ function toPlainProperties(properties) {
       return prop.number;
     },
     select(prop) {
-      return prop.select.name;
+      return prop.select?.name;
     },
     multi_select(prop) {
       return prop.multi_select.map(s => s.name);
