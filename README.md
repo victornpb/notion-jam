@@ -1,4 +1,5 @@
-![](./notion-jam-logo-256.png)
+
+![](./banner.fw.png)
 
 # notion-jam
 <!-- badge -->
@@ -9,6 +10,7 @@
 [![Node](https://img.shields.io/node/v/notion-jam.svg?style=flat-square)](package.json)
 [![LICENSE](https://img.shields.io/github/license/victornpb/notion-jam?style=flat-square)](LICENSE)
 <!-- endbadge -->
+
 
 **Sync pages from Notion to GitHub to be used as a static website ([JAM][jamstack])**
 
