@@ -1,7 +1,7 @@
 {
   "name": "notion-jam",
   "nameFull": "NotionJAM",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "A notion-jam cli / action",
   "license": "UNLICENSED",
   "engines": {

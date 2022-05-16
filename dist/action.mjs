@@ -1,5 +1,5 @@
 /*!
- * NotionJAM v0.0.10 (https://github.com/victornpb/notion-jam)
+ * NotionJAM v0.0.11 (https://github.com/victornpb/notion-jam)
  * Copyright (c) victornpb
  * @license UNLICENSED
  */
@@ -144,7 +144,7 @@ function toPlainPage(page) {
     created_time: new Date(page.created_time),
     last_edited_time: new Date(page.last_edited_time),
 
-    cover_image: page.cover?.external?.url,
+    cover_image: page.cover?.external?.url || page.cover?.file.url,
 
     icon_image: page.icon?.file?.url,
     icon_emoji: page.icon?.emoji,
