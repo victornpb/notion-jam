@@ -21,7 +21,7 @@ inputs:
     description: 'Path to save images, if started with . will be relative to ARTICLE_PATH, otherwise absolute (default=".")'
     required: false
   PARALLEL_PAGES:
-    description: '(default=3)'
+    description:  (default=3)'
     required: false
   PARALLEL_DOWNLOADS_PER_PAGE:
     description: '(default=3)'
