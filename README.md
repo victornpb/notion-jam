@@ -95,14 +95,14 @@
 | --- | --- | --- | --- |
 | NOTION_SECRET | Notion API Token secret | ✅ |  |
 | NOTION_DATABASE | Notion Database URL or ID (example: https://notion.so/00112233445566778899aabbccddeeff) | ✅ |  |
-| FILTER_PROP |  |  | Status |
-| FILTER_VALUES |  |  | Published |
-| CONVERT_PROP_CASE |  |  | snake |
+| FILTER_PROP | Property on the database used to query pages |  | Status |
+| FILTER_VALUES | Return pages with the FILTER_PROP is equal this list of values |  | Ready,Published |
+| CONVERT_PROP_CASE | Convert the database property names before adding to the frontmatter (camel,pascal,kebab,snake,none) |  | snake |
 | ARTICLE_PATH | Path template to where to save markdown files |  | posts/{title}/README.md |
 | ASSETS_PATH | Path to save images, if started with . will be relative to ARTICLE_PATH, otherwise absolute |  | ./ |
-| PARALLEL_PAGES |  |  | 25 |
-| PARALLEL_DOWNLOADS_PER_PAGE |  |  | 3 |
-| DOWNLOAD_IMAGE_TIMEOUT |  |  | 30 |
+| PARALLEL_PAGES | Fetch this amount of pages in parallel |  | 25 |
+| PARALLEL_DOWNLOADS_PER_PAGE | Number of images to download in parallel for each page |  | 3 |
+| DOWNLOAD_IMAGE_TIMEOUT | Timeout in seconds for each image download |  | 30 |
 | SKIP_DOWNLOADED_IMAGES | Skip downloading images if they already exist in the path |  | true |
 | DOWNLOAD_FRONTMATTER_IMAGES | Downloads image urls in the frontmatter |  | true |
 

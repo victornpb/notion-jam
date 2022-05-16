@@ -14,6 +14,15 @@ inputs:
   NOTION_DATABASE:
     description: 'Notion Database URL or ID (example: https://notion.so/00112233445566778899aabbccddeeff)'
     required: true
+  FILTER_PROP: 
+    description: Property on the database used to query pages (default:Status)
+    required: false
+  FILTER_VALUES:
+    description: Return pages with the FILTER_PROP is equal this list of values (default:Ready,Published)
+    required: false
+  CONVERT_PROP_CASE:
+    description: Convert the database property names before adding to the frontmatter (camel,pascal,kebab,snake,none) (default:snake)
+    required: false
   ARTICLE_PATH:
     description: 'Path template to where to save markdown files (default="posts/{title}/index.md")'
     required: false
@@ -21,16 +30,16 @@ inputs:
     description: 'Path to save images, if started with . will be relative to ARTICLE_PATH, otherwise absolute (default=".")'
     required: false
   PARALLEL_PAGES:
-    description:  (default=3)'
+    description: Fetch this amount of pages in parallel (default=3)'
     required: false
   PARALLEL_DOWNLOADS_PER_PAGE:
-    description: '(default=3)'
+    description: 'Number of images to download in parallel for each page (default=3)'
     required: false
   DOWNLOAD_IMAGE_TIMEOUT:
-    description: '(default=30)'
+    description: 'Timeout in seconds for each image download (default=30)'
     required: false
   SKIP_DOWNLOADED_IMAGES:
-    description: '(default=true)'
+    description: 'Skip downloading images if they already exist in the path (default=true)'
     required: false
   DOWNLOAD_FRONTMATTER_IMAGES:
     description: 'Downloads image urls in the frontmatter'
