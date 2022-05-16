@@ -20,20 +20,18 @@
 
 1. Create a new Notion Integration
     
-    ![notion secret.gif](Notion%20JAM%209e299002311840b7ae0bb3fb714990f2/notion_secret.gif)
+    ![notion secret](https://user-images.githubusercontent.com/3372598/168543273-8b592c0d-8459-4669-a608-4473edcd4a40.gif)
+
     
 2. Add Notion secret to GitHub repository
     1. Go to `github.com/{user}/{repo}/settings/secrets/actions`
     2. Set `NOTION_SECRET` of Notion to your repository secret.
         
-        [Encrypted secrets](https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets#using-encrypted-secrets-in-a-workflow)
-        
-    
-    ![add notion secret to github.gif](Notion%20JAM%209e299002311840b7ae0bb3fb714990f2/add_notion_secret_to_github.gif)
+        ![add notion secret to github](https://user-images.githubusercontent.com/3372598/168543331-efb3a64a-d126-477d-84db-d05b22131ce4.gif)
     
 3. Share the Database with the integration
     
-    ![add perm.gif](Notion%20JAM%209e299002311840b7ae0bb3fb714990f2/add_perm.gif)
+    ![add perm](https://user-images.githubusercontent.com/3372598/168543407-b8d7373a-c6ea-4e2a-9eef-2a29f6a557bb.gif)
     
 4. Create a workflow in `.github/workflows/**.yml` of your repository
     
