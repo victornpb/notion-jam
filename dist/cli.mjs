@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /*!
- * NotionJAM v0.0.9 (https://github.com/victornpb/notion-jam)
+ * NotionJAM v0.0.10 (https://github.com/victornpb/notion-jam)
  * Copyright (c) victornpb
  * @license UNLICENSED
  */
@@ -169,7 +169,7 @@ function toPlainProperties(properties) {
       return prop.number;
     },
     select(prop) {
-      return prop.select.name;
+      return prop.select?.name;
     },
     multi_select(prop) {
       return prop.multi_select.map(s => s.name);
@@ -227,7 +227,7 @@ function getDatabaseId(string) {
   }
 }
 
-function plugin$1(frontmatter) {
+function plugin$2(frontmatter) {
   return function transform(tree, vFile) {
     tree.children.unshift({
       type: 'yaml',
@@ -298,7 +298,7 @@ function getSize(headers = {}) {
   return parseInt(headers['content-length'] || headers['Content-Length']) || 0;
 }
 
-function plugin(options) {
+function plugin$1(options) {
 
   options = defaults({
     concurrency: 1,
@@ -470,6 +470,35 @@ function downloadImage(url, targetPath, { timeout = 1000 * 30, maxFileSize = Inf
   });
 }
 
+function plugin(frontmatter) {
+  return function transform(tree, vFile) {
+
+    let frontmatterNode;
+    visit(tree, 'yaml', async node => {
+      frontmatterNode = node;
+    });
+
+    if (frontmatterNode) {
+
+      const bodyImages = [];
+      visit(tree, 'image', async node => {
+        bodyImages.push(node.url);
+      });
+
+      const frontmatter = jsYaml.load(frontmatterNode.value);
+      if (frontmatter.thumb === 'cover') frontmatter._thumbnail = frontmatter.cover_image;
+      else if (frontmatter.thumb === 'icon') frontmatter._thumbnail = frontmatter.icon_image;
+      else if (frontmatter.thumb === 'first') frontmatter._thumbnail = bodyImages[0];
+      else if (/^\d+$/.test(frontmatter.thumb)) frontmatter._thumbnail = bodyImages[parseInt(frontmatter.thumb)+1];
+      else frontmatter._thumbnail = frontmatter[frontmatter.thumb] || frontmatter.cover_image || bodyImages[0] || frontmatter.icon_image;
+
+      // update frontmatter
+      frontmatterNode.value = jsYaml.dump(frontmatter);
+    }
+    else throw new Error('No frontmatter found');
+  };
+}
+
 async function transformMd({ markdown, article, articlePath, assetsPath }, options) {
 
   // create frontmatter
@@ -483,8 +512,8 @@ async function transformMd({ markdown, article, articlePath, assetsPath }, optio
   const vFile = await unified()
     .use(remarkParse)
     .use(remarkFrontmatter)
-    .use(plugin$1, frontmatter)
-    .use(plugin, {
+    .use(plugin$2, frontmatter)
+    .use(plugin$1, {
       outDir: assetsPath, // where to save images
       markdownPath: articlePath, // used to resolve relative image paths
       concurrency: options.parallelDownloadsPerPage, // number of concurrent downloads
@@ -493,6 +522,7 @@ async function transformMd({ markdown, article, articlePath, assetsPath }, optio
       timeout: options.downloadImageTimeout, // timeout in milliseconds
       maxFileSize: Infinity, // max file size in bytes
     })
+    .use(plugin)
     .use(remarkStringify)
     .process(markdown);
 
