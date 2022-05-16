@@ -5,6 +5,7 @@ import remarkFrontmatter from 'remark-frontmatter';
 
 import injectFrontmatterPlugin from '../remarkPlugin/injectFrontmatter.js';
 import downloadImgPlugin from '../remarkPlugin/downloadImages/downloadImages.js';
+import thumbnailDetectorPlugin from '../remarkPlugin/thumbnailDetector.js';
 
 export async function transformMd({ markdown, article, articlePath, assetsPath }, options) {
 
@@ -29,6 +30,7 @@ export async function transformMd({ markdown, article, articlePath, assetsPath }
       timeout: options.downloadImageTimeout, // timeout in milliseconds
       maxFileSize: Infinity, // max file size in bytes
     })
+    .use(thumbnailDetectorPlugin)
     .use(remarkStringify)
     .process(markdown);
 
