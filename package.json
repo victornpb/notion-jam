@@ -27,7 +27,7 @@
     "test": "npm run lint",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
-    "version": "npm run build && git add --all",
+    "version": "npm i --package-lock-only && npm run build && git add --all",
     "release": "np --any-branch"
   },
   "files": [
