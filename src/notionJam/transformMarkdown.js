@@ -2,6 +2,7 @@ import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkStringify from 'remark-stringify';
 import remarkFrontmatter from 'remark-frontmatter';
+import remarkGfm from 'remark-gfm';
 
 import injectFrontmatterPlugin from '../remarkPlugin/injectFrontmatter.js';
 import downloadImgPlugin from '../remarkPlugin/downloadImages/downloadImages.js';
@@ -19,6 +20,7 @@ export async function transformMd({ markdown, article, articlePath, assetsPath }
   // parse markdown, add frontmatter, download images, and stringify
   const vFile = await unified()
     .use(remarkParse)
+    .use(remarkGfm)
     .use(remarkFrontmatter)
     .use(injectFrontmatterPlugin, frontmatter)
     .use(downloadImgPlugin, {
