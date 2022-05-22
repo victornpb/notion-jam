@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /*!
- * NotionJAM v0.0.11 (https://github.com/victornpb/notion-jam)
+ * NotionJAM v0.0.12 (https://github.com/victornpb/notion-jam)
  * Copyright (c) victornpb
  * @license UNLICENSED
  */
@@ -15,6 +15,7 @@ import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkStringify from 'remark-stringify';
 import remarkFrontmatter from 'remark-frontmatter';
+import remarkGfm from 'remark-gfm';
 import jsYaml from 'js-yaml';
 import http from 'http';
 import https from 'https';
@@ -511,6 +512,7 @@ async function transformMd({ markdown, article, articlePath, assetsPath }, optio
   // parse markdown, add frontmatter, download images, and stringify
   const vFile = await unified()
     .use(remarkParse)
+    .use(remarkGfm)
     .use(remarkFrontmatter)
     .use(plugin$2, frontmatter)
     .use(plugin$1, {
