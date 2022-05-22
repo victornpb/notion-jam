@@ -51,9 +51,11 @@ function shouldTransform(path) {
 }
 
 var index = helperPluginUtils.declare(api => {
+  var _api$assumption, _api$assumption2;
+
   api.assertVersion(7);
-  const noDocumentAll = api.assumption("noDocumentAll");
-  const pureGetters = api.assumption("pureGetters");
+  const noDocumentAll = (_api$assumption = api.assumption("noDocumentAll")) != null ? _api$assumption : false;
+  const pureGetters = (_api$assumption2 = api.assumption("pureGetters")) != null ? _api$assumption2 : false;
   return {
     name: "bugfix-v8-spread-parameters-in-optional-chaining",
     visitor: {
@@ -70,5 +72,5 @@ var index = helperPluginUtils.declare(api => {
   };
 });
 
-exports.default = index;
+exports["default"] = index;
 //# sourceMappingURL=index.js.map
