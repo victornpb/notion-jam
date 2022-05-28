@@ -14,6 +14,11 @@
 
 **Sync pages from Notion to GitHub to be used as a static website ([JAM][jamstack])**
 
+- Notion pages are converted to markdown files.
+- Database properties are automatically added as yaml frontmatter
+- All images are downloaded locally and path rewritten to relative paths
+- Page cover is downloaded
+- Thumbnail property is added automatically to the frontmatter using page cover, first image, icon, or image number (configured by post)
 ---
 
 ## Usage
