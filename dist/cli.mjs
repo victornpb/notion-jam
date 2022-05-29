@@ -10,7 +10,7 @@ import fs from 'fs';
 import path from 'path';
 import defaults from 'default-args';
 import { Client } from '@notionhq/client';
-import { NotionToMarkdown } from 'notion-to-md/build/notion-to-md.js';
+import { NotionToMarkdown } from 'notion-2-markdown/build/notion-to-md.js';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkStringify from 'remark-stringify';
