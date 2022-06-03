@@ -238,13 +238,15 @@ define('audit-level', {
 
 define('auth-type', {
   default: 'legacy',
-  type: ['legacy', 'sso', 'saml', 'oauth'],
+  type: ['legacy', 'webauthn', 'sso', 'saml', 'oauth'],
   deprecated: `
-    This method of SSO/SAML/OAuth is deprecated and will be removed in
+    The SSO/SAML/OAuth methods are deprecated and will be removed in
     a future version of npm in favor of web-based login.
   `,
   description: `
     What authentication strategy to use with \`adduser\`/\`login\`.
+
+    Pass \`webauthn\` to use a web-based login.
   `,
   flatten,
 })
@@ -1179,11 +1181,23 @@ define('location', {
   `,
   description: `
     When passed to \`npm config\` this refers to which config file to use.
+
+    When set to "global" mode, packages are installed into the \`prefix\` folder
+    instead of the current working directory. See
+    [folders](/configuring-npm/folders) for more on the differences in behavior.
+
+    * packages are installed into the \`{prefix}/lib/node_modules\` folder,
+      instead of the current working directory.
+    * bin files are linked to \`{prefix}/bin\`
+    * man pages are linked to \`{prefix}/share/man\`
   `,
   flatten: (key, obj, flatOptions) => {
     flatten(key, obj, flatOptions)
     if (flatOptions.global) {
       flatOptions.location = 'global'
+    }
+    if (obj.location === 'global') {
+      flatOptions.global = true
     }
   },
 })

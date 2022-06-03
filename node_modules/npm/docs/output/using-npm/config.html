@@ -951,6 +951,15 @@ to "global"</li>
 <li>Type: "global", "user", or "project"</li>
 </ul>
 <p>When passed to <code>npm config</code> this refers to which config file to use.</p>
+<p>When set to "global" mode, packages are installed into the <code>prefix</code> folder
+instead of the current working directory. See
+<a href="../configuring-npm/folders.html">folders</a> for more on the differences in behavior.</p>
+<ul>
+<li>packages are installed into the <code>{prefix}/lib/node_modules</code> folder, instead
+of the current working directory.</li>
+<li>bin files are linked to <code>{prefix}/bin</code></li>
+<li>man pages are linked to <code>{prefix}/share/man</code></li>
+</ul>
 <!-- raw HTML omitted -->
 <!-- raw HTML omitted -->
 <h4 id="lockfile-version"><code>lockfile-version</code></h4>
@@ -1667,11 +1676,12 @@ command line.</p>
 <h4 id="auth-type"><code>auth-type</code></h4>
 <ul>
 <li>Default: "legacy"</li>
-<li>Type: "legacy", "sso", "saml", or "oauth"</li>
-<li>DEPRECATED: This method of SSO/SAML/OAuth is deprecated and will be removed
-in a future version of npm in favor of web-based login.</li>
+<li>Type: "legacy", "webauthn", "sso", "saml", or "oauth"</li>
+<li>DEPRECATED: The SSO/SAML/OAuth methods are deprecated and will be removed in
+a future version of npm in favor of web-based login.</li>
 </ul>
 <p>What authentication strategy to use with <code>adduser</code>/<code>login</code>.</p>
+<p>Pass <code>webauthn</code> to use a web-based login.</p>
 <!-- raw HTML omitted -->
 <!-- raw HTML omitted -->
 <h4 id="cache-max"><code>cache-max</code></h4>

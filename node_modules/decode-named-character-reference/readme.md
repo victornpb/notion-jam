@@ -41,17 +41,17 @@ In Node.js (version 12.20+, 14.14+, or 16.0+), install with [npm][]:
 npm install decode-named-character-reference
 ```
 
-In Deno with [Skypack][]:
+In Deno with [`esm.sh`][esmsh]:
 
 ```js
-import {decodeNamedCharacterReference} from 'https://cdn.skypack.dev/decode-named-character-reference@1?dts'
+import {decodeNamedCharacterReference} from 'https://esm.sh/decode-named-character-reference@1'
 ```
 
-In browsers with [Skypack][]:
+In browsers with [`esm.sh`][esmsh]:
 
 ```html
 <script type="module">
-  import {decodeNamedCharacterReference} from 'https://cdn.skypack.dev/decode-named-character-reference@1?min'
+  import {decodeNamedCharacterReference} from 'https://esm.sh/decode-named-character-reference@1?bundle'
 </script>
 ```
 
@@ -120,7 +120,7 @@ See [How to Contribute to Open Source][contribute].
 
 [npm]: https://docs.npmjs.com/cli/install
 
-[skypack]: https://www.skypack.dev
+[esmsh]: https://esm.sh
 
 [license]: license
 

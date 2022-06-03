@@ -1001,6 +1001,15 @@ npm registry. Must be IPv4 in versions of Node prior to 0.12.
 
 When passed to `npm config` this refers to which config file to use.
 
+When set to "global" mode, packages are installed into the `prefix` folder
+instead of the current working directory. See
+[folders](/configuring-npm/folders) for more on the differences in behavior.
+
+* packages are installed into the `{prefix}/lib/node_modules` folder, instead
+  of the current working directory.
+* bin files are linked to `{prefix}/bin`
+* man pages are linked to `{prefix}/share/man`
+
 <!-- automatically generated, do not edit manually -->
 <!-- see lib/utils/config/definitions.js -->
 
@@ -1899,11 +1908,13 @@ When set to `dev` or `development`, this is an alias for `--include=dev`.
 #### `auth-type`
 
 * Default: "legacy"
-* Type: "legacy", "sso", "saml", or "oauth"
-* DEPRECATED: This method of SSO/SAML/OAuth is deprecated and will be removed
-  in a future version of npm in favor of web-based login.
+* Type: "legacy", "webauthn", "sso", "saml", or "oauth"
+* DEPRECATED: The SSO/SAML/OAuth methods are deprecated and will be removed in
+  a future version of npm in favor of web-based login.
 
 What authentication strategy to use with `adduser`/`login`.
+
+Pass `webauthn` to use a web-based login.
 
 <!-- automatically generated, do not edit manually -->
 <!-- see lib/utils/config/definitions.js -->
