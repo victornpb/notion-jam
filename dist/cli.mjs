@@ -73,6 +73,7 @@ class NotionModule {
 
     this.options = defaults({
       filterProp: 'Status',
+      filterType: 'select',
       filterValues: 'Ready,Published',
       caseType: 'snake',
     }, options);
@@ -113,7 +114,7 @@ class NotionModule {
       filter: {
         or: [
           ...this.options.filterValues.map(value => ({
-            property: this.options.filterProp, select: { equals: value }
+            property: this.options.filterProp, [this.options.filterType]: { equals: value }
           })),
         ]
       }
@@ -597,6 +598,7 @@ async function run(options) {
 
     filterProp: 'Status',
     filterValues: 'Ready,Published',
+    filterType: 'select',
     caseType: 'snake',
 
     parallelPages: 25,
@@ -654,6 +656,7 @@ async function main() {
       notionSecret: process.env.NOTION_SECRET,
       notionDatabase: process.env.NOTION_DATABASE,
       filterProp: process.env.FILTER_PROP,
+      filterType: process.env.FILTER_TYPE,
       filterValues: process.env.FILTER_VALUES,
       caseType: process.env.CONVERT_PROP_CASE,
       articlePath: process.env.ARTICLE_PATH,

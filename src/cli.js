@@ -9,6 +9,7 @@ async function main() {
       notionSecret: process.env.NOTION_SECRET,
       notionDatabase: process.env.NOTION_DATABASE,
       filterProp: process.env.FILTER_PROP,
+      filterType: process.env.FILTER_TYPE,
       filterValues: process.env.FILTER_VALUES,
       caseType: process.env.CONVERT_PROP_CASE,
       articlePath: process.env.ARTICLE_PATH,

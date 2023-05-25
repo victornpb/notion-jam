@@ -10,6 +10,7 @@ export class NotionModule {
 
     this.options = defaults({
       filterProp: 'Status',
+      filterType: 'select',
       filterValues: 'Ready,Published',
       caseType: 'snake',
     }, options);
@@ -50,7 +51,7 @@ export class NotionModule {
       filter: {
         or: [
           ...this.options.filterValues.map(value => ({
-            property: this.options.filterProp, select: { equals: value }
+            property: this.options.filterProp, [this.options.filterType]: { equals: value }
           })),
         ]
       }
