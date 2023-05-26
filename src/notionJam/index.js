@@ -19,6 +19,7 @@ export default async function run(options) {
 
     filterProp: 'Status',
     filterValues: 'Ready,Published',
+    filterType: 'select',
     caseType: 'snake',
 
     parallelPages: 25,

@@ -12,6 +12,7 @@ async function main() {
       notionSecret: core.getInput('NOTION_SECRET', { required: true }),
       notionDatabase: core.getInput('NOTION_DATABASE', { required: true }),
       filterProp: core.getInput('FILTER_PROP'),
+      filterType: core.getInput('FILTER_TYPE'),
       filterValues: core.getInput('FILTER_VALUES'),
       caseType: core.getInput('CONVERT_PROP_CASE'),
       articlePath: core.getInput('ARTICLE_PATH'),

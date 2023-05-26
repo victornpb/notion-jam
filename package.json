@@ -21,6 +21,7 @@
   "bin": "dist/cli.mjs",
   "scripts": {
     "start": "node dist/cli.mjs",
+    "dev": "node src/cli.js",
     "build": "rollup -c",
     "watch": "rollup -c -w",
     "prebuild": "rimraf dist",
