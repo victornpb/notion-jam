@@ -14,8 +14,11 @@ inputs:
   NOTION_DATABASE:
     description: 'Notion Database URL or ID (example: https://notion.so/00112233445566778899aabbccddeeff)'
     required: true
-  FILTER_PROP: 
+  FILTER_PROP:
     description: Property on the database used to query pages (default:Status)
+    required: false
+  FILTER_TYPE:
+    description: Type of FILTER_PROP (default:select)
     required: false
   FILTER_VALUES:
     description: Return pages with the FILTER_PROP is equal this list of values (default:Ready,Published)
@@ -46,6 +49,6 @@ inputs:
     required: false
 
 runs:
-  
+
   using: node16
   main: dist/action.mjs

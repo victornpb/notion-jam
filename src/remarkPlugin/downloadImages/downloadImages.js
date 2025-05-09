@@ -188,8 +188,3 @@ function downloadImage(url, targetPath, { timeout = 1000 * 30, maxFileSize = Inf
     });
   });
 }
-
-
-
-
-

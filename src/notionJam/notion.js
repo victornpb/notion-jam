@@ -10,9 +10,12 @@ export class NotionModule {
 
     this.options = defaults({
       filterProp: 'Status',
+      filterType: 'select',
       filterValues: 'Ready,Published',
       caseType: 'snake',
     }, options);
+
+    this.options.should_ignore_filters = options.should_ignore_filters || false;
 
     this.options.filterValues = Array.isArray(this.options.filterValues) ? this.options.filterValues : this.options.filterValues.split(',').map(value => value.trim());
 
@@ -37,6 +40,33 @@ export class NotionModule {
       content: await this._getPageMarkdown(page.id),
     };
 
+    const cachedRelations = {};
+
+    const articleRelations = await Promise.allSettled(Object.entries(page.properties)
+      .filter(([ key, value]) => typeof value === 'object' && value.type === 'relation')
+      .map(async ( [key, {relation}] ) => {
+        let relationData = relation;
+        if(relation?.length > 0){
+          relationData = await Promise.allSettled(relation.map(async(relationData) => {
+            if(!cachedRelations?.[relationData.id]){
+              const getRelationToGetDB = await this.getRelation(relationData.id);
+
+              const filterProp = Object.values(getRelationToGetDB.properties).filter(({id}) => id === 'title')[0];
+
+              cachedRelations[relationData.id] = filterProp.title[0].plain_text;
+            }
+
+            return cachedRelations[relationData.id];
+
+          })).then((results) => results.map(({value}) => value));
+        }
+
+        return {[key]: relationData};
+      }))
+      .then((results) => Object.assign({}, ...results.map(({value}) => value)));
+
+    article = { ...article, ...articleRelations };
+
     if (this.options.caseType) {
       article = convertPropsCase(article, this.options.caseType);
     }
@@ -44,16 +74,28 @@ export class NotionModule {
     return article;
   }
 
+  async getRelation(relation_id){
+    const response = await this.notion.pages.retrieve({ page_id: relation_id });
+
+    return response;
+  }
+
   async _fetchPagesFromDb(database_id) {
-    const response = await this.notion.databases.query({
-      database_id: database_id,
-      filter: {
+    let filter;
+    if(!this.options.should_ignore_filters){
+      filter = {
         or: [
           ...this.options.filterValues.map(value => ({
-            property: this.options.filterProp, select: { equals: value }
+            property: this.options.filterProp, [this.options.filterType]: { equals: value }
           })),
         ]
-      }
+      };
+
+    }
+
+    const response = await this.notion.databases.query({
+      database_id: database_id,
+      filter: filter
     });
     // TODO: paginate more than 100 pages
     return response.results;
@@ -75,6 +117,11 @@ export class NotionModule {
         }
       }
     });
+  }
+
+  async getDatabase(database_id) {
+    const response = await this.notion.databases.retrieve({ database_id: database_id });
+    return response;
   }
 }
 
@@ -105,6 +152,15 @@ function toPlainProperties(properties) {
     },
     number(prop) {
       return prop.number;
+    },
+    relation(prop){
+      return prop.relation;
+    },
+    formula(prop){
+      return prop?.formula?.[prop.formula.type] ?? prop.formula;
+    },
+    status(prop){
+      return prop.status?.name;
     },
     select(prop) {
       return prop.select?.name;

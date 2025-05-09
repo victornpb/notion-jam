@@ -9,6 +9,7 @@ async function main() {
       notionSecret: process.env.NOTION_SECRET,
       notionDatabase: process.env.NOTION_DATABASE,
       filterProp: process.env.FILTER_PROP,
+      filterType: process.env.FILTER_TYPE,
       filterValues: process.env.FILTER_VALUES,
       caseType: process.env.CONVERT_PROP_CASE,
       articlePath: process.env.ARTICLE_PATH,
@@ -18,6 +19,7 @@ async function main() {
       downloadImageTimeout: process.env.DOWNLOAD_IMAGE_TIMEOUT,
       skipDownloadedImages: process.env.SKIP_DOWNLOADED_IMAGES,
       downloadFrontmatterImages: process.env.DOWNLOAD_FRONTMATTER_IMAGES,
+      should_ignore_filters: Boolean(process.env.SHOULD_IGNORE_FILTERS),
     });
   } catch (error) {
     console.error(error);
